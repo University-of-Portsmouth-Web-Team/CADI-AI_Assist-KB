@@ -1,0 +1,46 @@
+{
+  "_readme": [
+    "Query expansion. When any string in 'terms' appears in a visitor's question,",
+    "the words in 'expandsTo' are added to the search before ranking runs. The",
+    "visitor never sees this; it only widens what the ranker can find.",
+    "",
+    "THE RULE FOR ADDING ENTRIES — this one was learned the hard way.",
+    "",
+    "Only map a word the visitor uses to a DIFFERENT word the site uses: an",
+    "acronym to its full name, or a synonym to the site's own term. Never 'enrich'",
+    "a term that already matches the site's vocabulary, and never add generic",
+    "words.",
+    "",
+    "Two examples of what goes wrong. Expanding 'padlet' to 'Padlet collaboration",
+    "tool' added the words 'collaboration' and 'tool', which then let pages about",
+    "collaborative growth and Moodle tools outscore the actual Padlet page.",
+    "Expanding 'peer review' to 'peer observation teaching' added 'teaching',",
+    "which appears in dozens of URL paths and made a conference session stub look",
+    "like a confident answer. Both expansions made search worse than none.",
+    "",
+    "Entries marked \"confirm\": true are sector-standard expansions that CADI has",
+    "not verified. Check them before relying on them.",
+    "",
+    "Deliberately absent: SELL and gprof, because nobody has been able to say what",
+    "they stand for. Ask CADI, then add them. Also absent: APEX, PrepUP, Docebo,",
+    "Turnitin and SharePoint — external systems with no CADI page. Those belong in",
+    "external-links.json once CADI confirms the destinations."
+  ],
+
+  "entries": [
+    { "terms": ["air"], "expandsTo": "assessment information resource", "confirm": false },
+    { "terms": ["abl"], "expandsTo": "active blended learning", "confirm": false },
+    { "terms": ["cate"], "expandsTo": "Collaborative Award Teaching Excellence", "confirm": true },
+    { "terms": ["testa"], "expandsTo": "Transforming Experience Students Assessment", "confirm": true },
+    { "terms": ["pal"], "expandsTo": "peer assisted learning", "confirm": true },
+    { "terms": ["pgcert", "pgcerthe", "pg cert he", "pg cert"], "expandsTo": "postgraduate certificate higher education", "confirm": false },
+    { "terms": ["hea", "advancehe", "advance he", "he fellowship", "fhea", "sfhea", "pfhea"], "expandsTo": "AdvanceHE fellowship", "confirm": false },
+    { "terms": ["ltc", "call for paper", "call for papers"], "expandsTo": "Learning Teaching Conference", "confirm": false },
+    { "terms": ["observewell", "observe well", "peer review", "peer observation"], "expandsTo": "peer observation", "confirm": false },
+    { "terms": ["cpd calendar", "cpd catalogue", "cpd sessions", "cpd workshops", "cpd opportunities", "cpd timetable"], "expandsTo": "CPD support", "confirm": false },
+    { "terms": ["udl"], "expandsTo": "Universal Design Learning", "confirm": false },
+    { "terms": ["smart capture", "lecture capture", "lecture recording"], "expandsTo": "Panopto", "confirm": false },
+    { "terms": ["blended and connected"], "expandsTo": "connected curriculum", "confirm": false },
+    { "terms": ["vle"], "expandsTo": "Moodle", "confirm": false }
+  ]
+}

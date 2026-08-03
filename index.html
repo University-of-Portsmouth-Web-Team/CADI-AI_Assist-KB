@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CADI Assist — ask about CPD, teaching and learning</title>
+  <meta name="description" content="Ask a question in your own words and get an answer drawn from the CADI website." />
+  <meta name="robots" content="noindex" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Encode+Sans+Expanded:wght@400;700;800&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── University of Portsmouth brand tokens ──────────────────────────────
+       Palette and type from the UoP brand guidelines. Zero border-radius
+       throughout: the brand uses square corners, so nothing here is rounded.
+       Aero, the primary brand typeface, is licensed and not on Google Fonts,
+       so Encode Sans Expanded carries the headings as the approved web
+       alternative. */
+    :root {
+      --primary-dark:  #3C023C;
+      --primary:       #621360;
+      --secondary-dark:#0078B4;
+      --secondary:     #00A0FF;
+      --black:         #000000;
+      --dark-grey:     #505457;
+      --mid-grey:      #ABAAAA;
+      --light-grey:    #D1D1D1;
+      --lighter-grey:  #F7F7F7;
+      --off-white:     #FAFAFA;
+      --white:         #FFFFFF;
+
+      --surface:       rgba(255,255,255,0.05);
+      --surface-hover: rgba(255,255,255,0.09);
+      --hairline:      rgba(255,255,255,0.16);
+
+      --font-display: 'Encode Sans Expanded', 'Segoe UI', sans-serif;
+      --font-body:    'Open Sans', 'Segoe UI', sans-serif;
+
+      --step: 0.75rem;
+      --max-width: 52rem;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--off-white);
+      background: linear-gradient(160deg, var(--primary-dark) 0%, var(--primary) 55%, var(--primary-dark) 100%);
+      background-attachment: fixed;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Keyboard users must always be able to see where they are. */
+    :focus-visible {
+      outline: 3px solid var(--secondary);
+      outline-offset: 2px;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--white);
+      color: var(--primary-dark);
+      padding: var(--step);
+      font-weight: 700;
+      z-index: 10;
+    }
+    .skip-link:focus { left: 0; }
+
+    /* ── Header ─────────────────────────────────────────────────────────── */
+    header {
+      border-bottom: 1px solid var(--hairline);
+      padding: 1.25rem 1.25rem 1rem;
+    }
+    .header-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .wordmark {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: 0.02em;
+      margin: 0;
+    }
+    .wordmark span { color: var(--secondary); }
+    .tagline {
+      font-size: 0.875rem;
+      color: var(--light-grey);
+      margin: 0;
+    }
+
+    /* ── Main ───────────────────────────────────────────────────────────── */
+    main {
+      flex: 1 1 auto;
+      width: 100%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 0;
+    }
+
+    .notice {
+      border-left: 4px solid var(--secondary);
+      background: var(--surface);
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.875rem;
+    }
+    .notice[hidden] { display: none; }
+    .notice--warn { border-left-color: #FFB020; }
+
+    /* ── Welcome ────────────────────────────────────────────────────────── */
+    .welcome h2 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.5rem;
+      line-height: 1.3;
+      margin: 0 0 0.5rem;
+    }
+    .welcome p { color: var(--light-grey); margin: 0 0 1.5rem; max-width: 40rem; }
+
+    .prompts {
+      list-style: none;
+      margin: 0 0 1.5rem;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .prompt-chip {
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      color: var(--off-white);
+      background: var(--surface);
+      border: 1px solid var(--hairline);
+      border-radius: 0;
+      padding: 0.5rem 0.875rem;
+      cursor: pointer;
+      text-align: left;
+    }
+    .prompt-chip:hover { background: var(--surface-hover); border-color: var(--secondary); }
+
+    /* ── Messages ───────────────────────────────────────────────────────── */
+    .messages { margin: 0; padding: 0; list-style: none; }
+
+    .msg {
+      display: grid;
+      grid-template-columns: 2rem 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .avatar {
+      width: 2rem;
+      height: 2rem;
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: var(--white);
+      background: var(--dark-grey);
+    }
+    .msg--assistant .avatar {
+      background: linear-gradient(140deg, var(--secondary-dark), var(--secondary));
+      color: var(--primary-dark);
+    }
+    .bubble {
+      background: var(--surface);
+      border: 1px solid var(--hairline);
+      padding: 0.75rem 1rem;
+      min-width: 0;
+    }
+    .msg--assistant .bubble {
+      border-left: 4px solid var(--secondary);
+    }
+    .msg--error .bubble { border-left-color: #FFB020; }
+    .sender {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.6875rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--mid-grey);
+      margin: 0 0 0.25rem;
+    }
+    .bubble p { margin: 0 0 0.75rem; overflow-wrap: break-word; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble ul, .bubble ol { margin: 0 0 0.75rem; padding-left: 1.25rem; }
+    .bubble a { color: var(--secondary); text-decoration: underline; }
+    .bubble a:hover { text-decoration-thickness: 2px; }
+
+    /* ── Thinking indicator ─────────────────────────────────────────────── */
+    .steps { list-style: none; margin: 0; padding: 0; font-size: 0.875rem; color: var(--light-grey); }
+    .steps li { display: flex; align-items: center; gap: 0.5rem; }
+    .spinner {
+      width: 0.75rem; height: 0.75rem;
+      border: 2px solid var(--hairline);
+      border-top-color: var(--secondary);
+      animation: spin 0.7s linear infinite;
+      flex: 0 0 auto;
+    }
+    .tick { color: var(--secondary); flex: 0 0 auto; width: 0.75rem; text-align: center; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .spinner { animation-duration: 3s; }
+      * { scroll-behavior: auto !important; }
+    }
+
+    /* ── Composer ───────────────────────────────────────────────────────── */
+    .composer-wrap {
+      position: sticky;
+      bottom: 0;
+      background: linear-gradient(to top, var(--primary-dark) 55%, rgba(60,2,60,0));
+      padding: 1rem 1.25rem 0.75rem;
+      margin-top: 1.5rem;
+    }
+    .composer {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-end;
+    }
+    label.visually-hidden {
+      position: absolute; width: 1px; height: 1px;
+      overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+    }
+    textarea {
+      flex: 1 1 auto;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--off-white);
+      background: rgba(0,0,0,0.28);
+      border: 1px solid var(--hairline);
+      border-radius: 0;
+      padding: 0.625rem 0.75rem;
+      resize: none;
+      min-height: 2.75rem;
+      max-height: 9rem;
+    }
+    textarea::placeholder { color: var(--mid-grey); }
+    textarea:focus { border-color: var(--secondary); }
+
+    button.primary, button.ghost {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.8125rem;
+      letter-spacing: 0.03em;
+      border-radius: 0;
+      padding: 0.75rem 1.125rem;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+    button.primary {
+      color: var(--primary-dark);
+      background: var(--secondary);
+      border: 1px solid var(--secondary);
+    }
+    button.primary:hover:not(:disabled) { background: var(--white); border-color: var(--white); }
+    button.primary:disabled { opacity: 0.45; cursor: not-allowed; }
+    button.ghost {
+      color: var(--light-grey);
+      background: transparent;
+      border: 1px solid var(--hairline);
+    }
+    button.ghost:hover { color: var(--white); border-color: var(--white); }
+
+    .composer-meta {
+      max-width: var(--max-width);
+      margin: 0.5rem auto 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.75rem;
+      color: var(--mid-grey);
+      flex-wrap: wrap;
+    }
+    .composer-meta p { margin: 0; }
+
+    @media (max-width: 34rem) {
+      .msg { grid-template-columns: 1.5rem 1fr; gap: 0.5rem; }
+      .avatar { width: 1.5rem; height: 1.5rem; font-size: 0.625rem; }
+      button.primary, button.ghost { padding: 0.75rem 0.875rem; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#question">Skip to the question box</a>
+
+  <header>
+    <div class="header-inner">
+      <p class="wordmark">CADI <span>Assist</span></p>
+      <p class="tagline">Answers drawn from the CADI website</p>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Shown only when the live page index could not be loaded. The previous
+         version failed silently here and answered from ten hardcoded pages
+         without telling anyone. -->
+    <div class="notice notice--warn" id="limited-notice" hidden role="status">
+      <strong>Limited mode.</strong> The assistant could not load the current list of CADI pages,
+      so it is working from a small built-in list and may miss things.
+      Try reloading, or use <a href="https://cadi.port.ac.uk">the CADI website</a>.
+    </div>
+
+    <div class="welcome" id="welcome">
+      <h2>What would you like to know?</h2>
+      <p>
+        Ask in your own words — about CPD, fellowship routes, assessment, learning design,
+        digital tools or CADI events. Answers come from the CADI website, with links to the
+        pages they came from.
+      </p>
+      <ul class="prompts" id="prompts"></ul>
+    </div>
+
+    <ul class="messages" id="messages" aria-live="polite" aria-label="Conversation"></ul>
+    <div id="thinking" aria-live="polite"></div>
+  </main>
+
+  <div class="composer-wrap">
+    <form class="composer" id="composer">
+      <label class="visually-hidden" for="question">Your question</label>
+      <textarea id="question" name="question" rows="1"
+                placeholder="Ask a question in your own words…"
+                autocomplete="off" enterkeyhint="send"></textarea>
+      <button type="submit" class="primary" id="send">Send</button>
+      <button type="button" class="ghost" id="clear">Clear</button>
+    </form>
+    <div class="composer-meta">
+      <p>AI-generated answer. Always check the linked page.</p>
+      <p id="index-status">Loading CADI pages…</p>
+    </div>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+  <noscript>
+    <div style="max-width:52rem;margin:1.5rem auto;padding:0 1.25rem">
+      <p>CADI Assist needs JavaScript. Please use
+        <a href="https://cadi.port.ac.uk" style="color:#00A0FF">the CADI website</a> instead.</p>
+    </div>
+  </noscript>
+</body>
+</html>

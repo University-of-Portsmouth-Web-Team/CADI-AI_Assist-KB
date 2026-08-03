@@ -1,0 +1,52 @@
+{
+  "_readme": [
+    "Page priorities. 'match' is a regular expression tested against the URL path.",
+    "'weight' above 1 promotes, below 1 demotes.",
+    "",
+    "IMPORTANT — read this before changing a weight.",
+    "",
+    "A boost above 1 only applies to a page that is ALREADY nearly winning on",
+    "relevance. Specifically, a page must reach boostFloor (default 0.6) of the top",
+    "relevance score before any promotion touches it, and the effect then grows as",
+    "the square of how close it already was. This is deliberate. An earlier version",
+    "of this project applied boosts as a flat multiplier, and the result was that",
+    "the boosted CPD page won queries like 'authentic assessment' purely because it",
+    "mentioned 'assessment design' in passing.",
+    "",
+    "The principle: boosts break ties between relevant results. They never",
+    "manufacture relevance. If a page is not relevant to a query, no weight here",
+    "should be able to rescue it — and if a page should be relevant but is not, the",
+    "fix is a glossary entry or better page content, not a bigger number.",
+    "",
+    "Demotions (weight below 1) apply in full, with no relevance gate. Suppressing",
+    "known low-value content needs no hedging."
+  ],
+  "boostFloor": 0.6,
+  "boosts": [
+    {
+      "match": "^/cpd-and-support$",
+      "weight": 2.0,
+      "reason": "TECH-519: the single most requested landing page. 'cpd' and its ~15 spelling variants should converge here."
+    },
+    {
+      "match": "^/(contact-us|about-us)$",
+      "weight": 1.3,
+      "reason": "Always keep a route to a human reachable."
+    },
+    {
+      "match": "^/cadi-news/",
+      "weight": 0.85,
+      "reason": "News items are time-limited. They should lose to an evergreen guidance page on the same topic."
+    },
+    {
+      "match": "^/about-us/meet-cadi-team/meet-",
+      "weight": 0.7,
+      "reason": "45 short staff biography pages. Useful when someone asks about a person, noise otherwise."
+    },
+    {
+      "match": "/conference-schedule/",
+      "weight": 0.6,
+      "reason": "60+ near-identical conference session and schedule stubs. The conference landing page is almost always the better answer, and these stubs were outranking real guidance pages on generic words like 'review' and 'teaching'."
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+name: Crawl CADI and update the index
+
+on:
+  schedule:
+    # Weekly, Sunday 02:00 UTC.
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: 'Site to crawl'
+        required: true
+        default: 'https://cadi.port.ac.uk'
+      max_pages:
+        description: 'Maximum pages to index'
+        required: false
+        default: '1500'
+
+permissions:
+  contents: write
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4 lxml
+
+      - name: Record the current page count
+        id: before
+        run: |
+          if [ -f search-index.json ]; then
+            COUNT=$(python -c "import json;print(len(json.load(open('search-index.json'))['pages']))")
+          else
+            COUNT=0
+          fi
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          echo "Index before this run: $COUNT pages"
+
+      - name: Crawl
+        run: |
+          python scripts/crawl.py \
+            --url "${{ github.event.inputs.target_url || 'https://cadi.port.ac.uk' }}" \
+            --max-pages "${{ github.event.inputs.max_pages || '1500' }}" \
+            --output search-index.json \
+            --min-pages 50
+
+      # A crawl that returns far fewer pages than last week usually means the
+      # site changed its markup, not that the site shrank. Failing here keeps
+      # the previous good index in place rather than committing a broken one.
+      - name: Guard against a collapsed index
+        env:
+          BEFORE: ${{ steps.before.outputs.count }}
+        run: |
+          AFTER=$(python -c "import json;print(len(json.load(open('search-index.json'))['pages']))")
+          echo "Before: $BEFORE   After: $AFTER"
+          if [ "$BEFORE" -gt 0 ]; then
+            THRESHOLD=$(( BEFORE * 70 / 100 ))
+            if [ "$AFTER" -lt "$THRESHOLD" ]; then
+              echo "::error::Index dropped from $BEFORE to $AFTER pages (below 70% of the previous run)."
+              echo "This usually means the Drupal theme changed and CONTENT_SELECTORS in scripts/crawl.py needs updating."
+              echo "Not committing. The previous index stays live."
+              exit 1
+            fi
+          fi
+
+      - name: Re-run the retrieval evaluation against the new index
+        # The index is what retrieval ranks over, so a new index can change the
+        # scores even though no code changed. This surfaces that immediately.
+        continue-on-error: true
+        run: node eval/run.mjs
+
+      - name: Commit the updated index
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add search-index.json
+          if git diff --staged --quiet; then
+            echo "No change to the index — nothing to commit."
+          else
+            COUNT=$(python -c "import json;print(len(json.load(open('search-index.json'))['pages']))")
+            git commit -m "chore: update search index — ${COUNT} pages ($(date -u +'%Y-%m-%d %H:%M UTC'))"
+            git push
+            echo "Committed $COUNT pages."
+          fi

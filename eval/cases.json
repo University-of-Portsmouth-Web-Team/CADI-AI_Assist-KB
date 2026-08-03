@@ -1,0 +1,209 @@
+{
+  "_readme": [
+    "Every query below is taken verbatim from the CADI Google Analytics site-search",
+    "export (7 Feb - 7 Apr 2026), including the misspellings. Expectations are set",
+    "against pages that actually exist on cadi.port.ac.uk.",
+    "",
+    "Assertion types:",
+    "  expect_url_contains  the top result's URL must contain this string",
+    "  expect_in_top_3      one of the top three results must contain this string",
+    "  expect_weak          retrieval must report low confidence (nothing really answers this)",
+    "  expect_gap           retrieval must find nothing at all",
+    "",
+    "The expect_weak and expect_gap cases matter more than the score suggests.",
+    "They assert that certain questions return an honest 'not on this site'. Any",
+    "later tuning for recall will quietly destroy that unless it is tested."
+  ],
+  "cases": [
+    {
+      "query": "cpd",
+      "expect_url_contains": "/cpd-and-support",
+      "category": "exact"
+    },
+    {
+      "query": "CPD and Support",
+      "expect_url_contains": "/cpd-and-support",
+      "category": "exact"
+    },
+    {
+      "query": "cpd for staff",
+      "expect_in_top_3": "/cpd-and-support",
+      "category": "synonym"
+    },
+    {
+      "query": "connected curriculum",
+      "expect_url_contains": "/connected-curriculum",
+      "category": "exact"
+    },
+    {
+      "query": "learning design",
+      "expect_url_contains": "/learning-design",
+      "category": "exact"
+    },
+    {
+      "query": "categorical marking",
+      "expect_url_contains": "categorical-marking",
+      "category": "exact"
+    },
+    {
+      "query": "panopto",
+      "expect_url_contains": "/panopto",
+      "category": "exact"
+    },
+    {
+      "query": "moodle tools",
+      "expect_in_top_3": "moodle",
+      "category": "exact"
+    },
+    {
+      "query": "padlet",
+      "expect_in_top_3": "padlet",
+      "category": "exact"
+    },
+    {
+      "query": "collaborative growth",
+      "expect_url_contains": "collaborative-growth",
+      "category": "exact"
+    },
+    {
+      "query": "student engagement",
+      "expect_url_contains": "/student-engagement",
+      "category": "exact"
+    },
+    {
+      "query": "accessibility",
+      "expect_in_top_3": "accessibility",
+      "category": "exact"
+    },
+    {
+      "query": "Categorical Markeing",
+      "expect_url_contains": "categorical-marking",
+      "category": "typo"
+    },
+    {
+      "query": "timetbale",
+      "category": "typo-no-page",
+      "expect_weak": true
+    },
+    {
+      "query": "cpd timetab;e",
+      "category": "typo",
+      "expect_in_top_3": "/cpd-and-support"
+    },
+    {
+      "query": "inclusive curruculum",
+      "expect_in_top_3": "curriculum",
+      "category": "typo"
+    },
+    {
+      "query": "fellwoship",
+      "expect_in_top_3": "fellow",
+      "category": "typo"
+    },
+    {
+      "query": "felowship",
+      "expect_in_top_3": "fellow",
+      "category": "typo"
+    },
+    {
+      "query": "learnin",
+      "expect_in_top_3": "learning",
+      "category": "typo"
+    },
+    {
+      "query": "My optional choises",
+      "category": "typo-unknown",
+      "expect_weak": true
+    },
+    {
+      "query": "how do I get AdvanceHE Fellowship",
+      "expect_in_top_3": "fellow",
+      "category": "natural-language"
+    },
+    {
+      "query": "how do I get advanced fellowship",
+      "expect_in_top_3": "fellow",
+      "category": "natural-language"
+    },
+    {
+      "query": "guidance on connected curriculum",
+      "expect_in_top_3": "/connected-curriculum",
+      "category": "natural-language"
+    },
+    {
+      "query": "what CPD sessions are coming up",
+      "expect_in_top_3": "/cpd-and-support",
+      "category": "natural-language"
+    },
+    {
+      "query": "AIR",
+      "expect_in_top_3": "assessment",
+      "category": "acronym"
+    },
+    {
+      "query": "HE fellowship",
+      "expect_in_top_3": "fellow",
+      "category": "acronym"
+    },
+    {
+      "query": "Pg Cert HE",
+      "expect_in_top_3": "postgraduate-certificate",
+      "category": "acronym"
+    },
+    {
+      "query": "TESTA",
+      "expect_in_top_3": "testa",
+      "category": "acronym"
+    },
+    {
+      "query": "enABLe",
+      "category": "acronym-unknown",
+      "expect_weak": true
+    },
+    {
+      "query": "observe well",
+      "expect_in_top_3": "teach-well",
+      "category": "synonym"
+    },
+    {
+      "query": "peer review",
+      "category": "content-gap",
+      "expect_weak": true
+    },
+    {
+      "query": "call for paper",
+      "expect_in_top_3": "conference",
+      "category": "synonym"
+    },
+    {
+      "query": "Learning and Teaching Conference 2026",
+      "expect_in_top_3": "conference",
+      "category": "exact"
+    },
+    {
+      "query": "reasonable adjustment and assessment",
+      "expect_in_top_3": "reasonable-adjustments",
+      "category": "synonym"
+    },
+    {
+      "query": "sickness policy",
+      "expect_weak": true,
+      "category": "off-site"
+    },
+    {
+      "query": "travel and expenses",
+      "expect_weak": true,
+      "category": "off-site"
+    },
+    {
+      "query": "gprof",
+      "expect_gap": true,
+      "category": "unknown-term"
+    },
+    {
+      "query": "xqzjvw",
+      "category": "unknown-term",
+      "expect_gap": true
+    }
+  ]
+}

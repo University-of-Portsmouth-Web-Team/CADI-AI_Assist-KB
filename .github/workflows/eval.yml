@@ -1,0 +1,47 @@
+name: Evaluate retrieval
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # An API key must never reach this repository. A key was posted in plain
+      # text on TECH-519 in April 2026; this step exists so that cannot happen
+      # here without the build going red.
+      - name: Check for anything shaped like an API key
+        run: |
+          if grep -rInE 'sk-ant-[A-Za-z0-9_-]{10,}' \
+               --exclude-dir=.git --exclude-dir=node_modules . ; then
+            echo "::error::A string shaped like an Anthropic API key is committed in this repository."
+            echo "Revoke it in the Anthropic console immediately, then remove it from the file AND from git history."
+            exit 1
+          fi
+          echo "No key-shaped strings found."
+
+      - name: Check the config files are valid JSON
+        run: |
+          for file in config/glossary.json config/boosts.json eval/cases.json search-index.json; do
+            node -e "JSON.parse(require('fs').readFileSync('$file','utf8'))" \
+              && echo "  ok   $file" \
+              || { echo "::error::$file is not valid JSON"; exit 1; }
+          done
+
+      - name: Run the retrieval evaluation
+        run: node eval/run.mjs
+
+      - name: Check the Worker parses
+        run: node --check worker/worker.js
+
+      - name: End-to-end smoke test (API call stubbed)
+        run: node eval/smoke.mjs

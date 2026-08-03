@@ -1,0 +1,73 @@
+# CADI Assist — Cloudflare Worker configuration.
+#
+# Deploy from inside this folder:   wrangler deploy
+# Set the API key (never put it in this file):   wrangler secret put ANTHROPIC_API_KEY
+
+name = "cadi-assist-proxy"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+# ── Rate limiting and the daily spend cap need this KV namespace ──────────────
+#
+# Create it once:
+#   wrangler kv namespace create RATE_LIMIT
+#
+# That prints an id. Paste it below and uncomment all three lines.
+#
+# Until you do, the Worker still runs but there is NO rate limit and NO daily
+# cap. GET /health will say so in its "warnings" list. Do not leave it like
+# that: an uncapped public endpoint in front of a paid API is how you get a
+# surprise bill.
+#
+# [[kv_namespaces]]
+# binding = "RATE_LIMIT"
+# id = "PASTE_YOUR_KV_NAMESPACE_ID_HERE"
+
+[vars]
+
+# ── Which sites may use the assistant ────────────────────────────────────────
+# Comma separated, no spaces, no trailing slash. A browser request from any
+# other origin is refused with a 403. Never set this to "*" in production.
+ALLOWED_ORIGINS = "https://cadi.port.ac.uk,https://stager-tandl.uopmicrosites.zedcloud.co.uk"
+
+# ── Model ────────────────────────────────────────────────────────────────────
+# Checked against Anthropic's model list on 3 August 2026. Current models are
+# claude-sonnet-5, claude-opus-5, claude-fable-5 and claude-haiku-4-5-20251001.
+#
+# claude-sonnet-5 is the right default here: it is the fast tier, and this task
+# is short grounded answers over about twenty page extracts.
+#
+# Model IDs are retired on a schedule, and a retired ID returns an error with no
+# fallback. That is exactly what took the previous version of this assistant off
+# the air. Check https://platform.claude.com/docs/en/about-claude/model-deprecations
+# once a term, and note that changing this value is a redeploy, not a code edit.
+MODEL = "claude-sonnet-5"
+
+# How much thinking the model does before answering: low, medium, high, xhigh, max.
+# "low" is Anthropic's documented recommendation for latency-sensitive chat.
+# Raise to "medium" if answers feel shallow; expect slower replies and more cost.
+EFFORT = "low"
+
+# Hard ceiling on total output, which includes the model's thinking as well as
+# the visible answer. 2000 leaves room for both. Do not drop this to 1000: at
+# that size a thinking model can spend the whole budget before it starts writing.
+MAX_TOKENS = "2000"
+
+# ── Abuse and spend limits ───────────────────────────────────────────────────
+# These only take effect once the KV namespace above is bound.
+PER_MINUTE_PER_IP = "8"
+PER_DAY_PER_IP = "100"
+PER_DAY_TOTAL = "600"
+
+# ── Request size limits ──────────────────────────────────────────────────────
+MAX_QUERY_CHARS = "600"
+MAX_KNOWLEDGE_CHARS = "60000"
+MAX_TURNS = "20"
+
+# ── Wording used in the system prompt ────────────────────────────────────────
+# The site calls itself "Centre for Academic and Digital Innovation". Some
+# internal documents say "Academic Development & Innovation". Confirm which is
+# correct with CADI and use one form everywhere.
+SITE_NAME = "the Centre for Academic and Digital Innovation (CADI)"
+SITE_URL = "https://cadi.port.ac.uk"
+CONTACT_EMAIL = "cadi@port.ac.uk"
