@@ -24,16 +24,10 @@ const PROXY_URL = 'https://cadi-search-proxy.kristian-band.workers.dev/api/ask';
 
 /** Raw GitHub URL of this repository's own search-index.json. */
 const INDEX_URL =
-  'https://raw.githubusercontent.com/University-of-Portsmouth-Web-Team/cadi-assist/main/search-index.json';
+  'https://raw.githubusercontent.com/University-of-Portsmouth-Web-Team/CADI-AI_Assist-KB/main/search-index.json';
 
-// Absolute, not relative: when this script is embedded as a widget on
-// cadi.port.ac.uk, './config/...' would resolve against that site and 404.
-// The failure is silent (both loads fall back to null), which would quietly
-// disable acronym expansion and boosts — the things the eval score depends on.
-const GLOSSARY_URL =
-  'https://raw.githubusercontent.com/University-of-Portsmouth-Web-Team/cadi-assist/main/config/glossary.json';
-const BOOSTS_URL =
-  'https://raw.githubusercontent.com/University-of-Portsmouth-Web-Team/cadi-assist/main/config/boosts.json';
+const GLOSSARY_URL = './config/glossary.json';
+const BOOSTS_URL = './config/boosts.json';
 
 const EXAMPLE_PROMPTS = [
   'How do I get AdvanceHE Fellowship?',
