@@ -28,7 +28,7 @@ compatibility_date = "2026-01-01"
 # ── Which sites may use the assistant ────────────────────────────────────────
 # Comma separated, no spaces, no trailing slash. A browser request from any
 # other origin is refused with a 403. Never set this to "*" in production.
-ALLOWED_ORIGINS = "https://cadi.port.ac.uk,https://stager-tandl.uopmicrosites.zedcloud.co.uk"
+ALLOWED_ORIGINS = "https://cadi.port.ac.uk,https://stager-tandl.uopmicrosites.zedcloud.co.uk,https://university-of-portsmouth-web-team.github.io"
 
 # ── Model ────────────────────────────────────────────────────────────────────
 # Checked against Anthropic's model list on 3 August 2026. Current models are
