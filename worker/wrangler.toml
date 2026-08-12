@@ -3,7 +3,7 @@
 # Deploy from inside this folder:   wrangler deploy
 # Set the API key (never put it in this file):   wrangler secret put ANTHROPIC_API_KEY
 
-name = "cadi-assist-proxy"
+name = "cadi-search-proxy"
 main = "worker.js"
 compatibility_date = "2026-01-01"
 
