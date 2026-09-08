@@ -845,7 +845,7 @@ Then either `Committed 241 pages.` or `No change to the index — nothing to com
 Useful for diagnosing extraction problems, because you see every page as it's fetched:
 
 ```powershell
-pip install requests beautifulsoup4 lxml
+pip install -r requirements.txt
 python scripts/crawl.py --url https://cadi.port.ac.uk --output test-index.json
 ```
 

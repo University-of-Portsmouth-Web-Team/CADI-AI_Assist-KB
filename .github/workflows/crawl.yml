@@ -27,10 +27,19 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          # cache: 'pip' needs a dependency file to hash into a cache key.
+          # requirements.txt is that file — do not remove one without the other.
           cache: 'pip'
+          cache-dependency-path: requirements.txt
+
+      # Matches eval.yml. The evaluation step below runs Node, and both
+      # workflows should score the same index on the same runtime.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
 
       - name: Install dependencies
-        run: pip install requests beautifulsoup4 lxml
+        run: pip install -r requirements.txt
 
       - name: Record the current page count
         id: before

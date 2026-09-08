@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.0.1 — 8 September 2026
+
+The weekly crawl had been failing on every run. No code was wrong; the workflow was.
+
+### Fixed
+
+| # | Problem | Fix |
+|---|---|---|
+| 30 | `crawl.yml` asked `actions/setup-python@v5` for `cache: 'pip'`, but the repository had no `requirements.txt` or `pyproject.toml` for the action to hash into a cache key — dependencies were installed inline with `pip install requests beautifulsoup4 lxml`. In v5 that is an error, not a warning, so the step failed, the job aborted after about two seconds, and the crawl, the collapsed-index guard and the commit never ran. Identical failure every week since. | `requirements.txt` added and referenced by `cache-dependency-path`, with the install step reading from it. Versions pinned, so an unattended weekly run cannot pick up a new `beautifulsoup4` or `lxml` and change extraction between two runs nobody watched. |
+| 31 | The evaluation step inside `crawl.yml` called `node eval/run.mjs` with no `setup-node` step, so it used whatever Node the runner happened to ship. `eval.yml` pins Node 22. The two workflows could score the same index on different runtimes. | `actions/setup-node@v4` with `node-version: '22'`, matching `eval.yml`. |
+
+Verified against Python 3.12 with the pinned versions: `scripts/crawl.py` imports cleanly and both the `lxml` and `xml` parsers behave as before.
+
 ## 2.0 — 3 August 2026
 
 A working version of the original CADI Assist idea. Same shape as before: a static page that ranks a crawled index in the browser and asks Claude through a Cloudflare Worker. Everything that was broken is fixed, and the parts that were only claimed are now written.

@@ -78,6 +78,7 @@ cadi-assist/
 │   └── wrangler.toml           Worker configuration and all tunables
 ├── scripts/
 │   └── crawl.py                the site crawler
+├── requirements.txt            pinned crawler dependencies
 ├── eval/
 │   ├── cases.json              38 test queries taken from real analytics
 │   ├── run.mjs                 offline retrieval evaluation
@@ -213,7 +214,7 @@ Everything else lives in `worker/wrangler.toml` as environment variables, so cha
 ## 6. The crawler
 
 ```bash
-pip install requests beautifulsoup4 lxml
+pip install -r requirements.txt
 python scripts/crawl.py --url https://cadi.port.ac.uk
 ```
 

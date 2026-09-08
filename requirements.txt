@@ -1,0 +1,16 @@
+# Dependencies for scripts/crawl.py.
+#
+# This file also exists so that `cache: 'pip'` in .github/workflows/crawl.yml
+# has something to hash into a cache key. Without a requirements.txt or a
+# pyproject.toml, actions/setup-python@v5 fails the step outright and the
+# whole crawl job aborts before it installs anything.
+#
+# Versions are pinned deliberately. The crawl runs unattended once a week and
+# parsing is the part that breaks; a floating bs4 or lxml release should not be
+# able to change extraction between two runs that nobody watched.
+# To upgrade: bump a pin, run the crawl manually via workflow_dispatch, and
+# check the quality report before merging.
+
+requests==2.34.2
+beautifulsoup4==4.15.0
+lxml==6.1.3
